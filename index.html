@@ -595,7 +595,7 @@ const histories = { strategist:[], writer:[], community:[], adcopy:[] };
 const isLoading = { strategist:false, writer:false, community:false, adcopy:false };
 
 // ══ GEMINI CALL ══════════════════════════════════════════════════════════════
-async function callGemini(system, contents, maxTokens=1200) {
+async function callGemini(system, contents, maxTokens=2500) {
   const res = await fetch(GEMINI_URL(API_KEY), {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
@@ -967,7 +967,7 @@ RULES: Only include data you can actually see. Write "Not reported this week" fo
   const rexSystem=`You are Rex, a professional weekly social media report writer for Barista & Paws. You write accurate, clear, polished client reports based only on data visible in the provided screenshots. You never fabricate numbers. You know Barista & Paws' business — pet grooming, boarding, café, at SMX Convention Center, Pasay City.`;
 
   try{
-    const reply=await callGemini(rexSystem,[{role:'user',parts:[...imgParts,textPart]}],1800);
+    const reply=await callGemini(rexSystem,[{role:'user',parts:[...imgParts,textPart]}],3000);
     window._lastReport=reply;
     out.innerHTML=`
       <div class="report-out">${fmt(reply)}</div>
