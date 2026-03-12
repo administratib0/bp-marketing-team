@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barista & Paws — Marketing Team</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FDF6EC; --espresso: #2C1A0E; --caramel: #C8854A;
+    --latte: #E8C99A; --foam: #FFF8F0; --bark: #7A4A28;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--espresso); min-height: 100vh; }
+
+  header { background: var(--espresso); padding: 24px 40px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 24px rgba(44,26,14,0.3); }
+  .logo-mark { width: 44px; height: 44px; background: var(--caramel); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  header h1 { font-family: 'Playfair Display', serif; color: var(--latte); font-size: 20px; line-height: 1.1; }
+  header h1 span { display: block; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: 0.15em; color: var(--caramel); text-transform: uppercase; margin-top: 2px; }
+  .platform-badges { margin-left: auto; display: flex; gap: 8px; }
+  .badge { padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge.fb { background: #1877F2; color: white; }
+  .badge.tt { background: #010101; color: white; border: 1px solid #444; }
+
+  .team-section { padding: 36px 40px; max-width: 1240px; margin: 0 auto; }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--caramel); margin-bottom: 18px; }
+  .team-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 36px; }
+
+  .persona-card { background: white; border-radius: 18px; padding: 18px; cursor: pointer; border: 2px solid transparent; transition: all 0.25s ease; position: relative; overflow: hidden; }
+  .persona-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--card-color, var(--caramel)); transition: height 0.25s ease; }
+  .persona-card:hover, .persona-card.active { border-color: var(--card-color, var(--caramel)); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(44,26,14,0.12); }
+  .persona-card.active::before { height: 6px; }
+  .card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 12px; }
+  .card-name { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+  .card-role { font-size: 10px; font-weight: 600; color: var(--card-color, var(--caramel)); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .card-desc { font-size: 11.5px; line-height: 1.5; color: #6B5445; }
+
+  /* WORKSPACE */
+  .workspace { background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 8px 40px rgba(44,26,14,0.08); display: flex; flex-direction: column; }
+  .workspace-header { padding: 18px 28px; border-bottom: 1px solid #F0E8DF; display: flex; align-items: center; gap: 14px; background: var(--foam); }
+  .ws-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .ws-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; }
+  .ws-subtitle { font-size: 11.5px; color: #8A6A55; margin-top: 2px; }
+
+  /* QUICK PROMPTS */
+  .quick-prompts { padding: 12px 28px; display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #F0E8DF; background: #FEFCFA; }
+  .quick-btn { padding: 5px 13px; border-radius: 20px; border: 1.5px solid var(--ac, #E8C99A); background: transparent; color: var(--ac, #7A4A28); font-family: 'DM Sans', sans-serif; font-size: 11.5px; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .quick-btn:hover { background: var(--ac); color: white; border-color: var(--ac); }
+
+  /* CHAT */
+  .chat-area { flex: 1; padding: 22px 28px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; min-height: 300px; max-height: 420px; }
+  .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #B8A090; text-align: center; padding: 40px; }
+  .empty-state .es-icon { font-size: 44px; margin-bottom: 12px; }
+  .empty-state p { font-size: 13.5px; line-height: 1.6; max-width: 280px; }
+  .msg { display: flex; gap: 12px; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  .msg.user { flex-direction: row-reverse; }
+  .msg-avatar { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; margin-top: 2px; }
+  .msg-bubble { max-width: 78%; padding: 11px 15px; border-radius: 16px; font-size: 13px; line-height: 1.65; white-space: pre-wrap; }
+  .msg.user .msg-bubble { background: var(--espresso); color: var(--latte); border-bottom-right-radius: 4px; }
+  .msg.assistant .msg-bubble { background: var(--foam); border: 1px solid #EDE0D4; border-bottom-left-radius: 4px; }
+  .msg-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+  .msg.user .msg-label { text-align: right; color: var(--caramel); }
+  .typing-indicator .msg-bubble { display: flex; align-items: center; gap: 5px; padding: 13px 17px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--caramel); animation: bounce 1.2s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,60%,100% { transform:translateY(0); opacity:0.4; } 30% { transform:translateY(-6px); opacity:1; } }
+
+  /* INPUT BAR */
+  .input-bar { padding: 14px 28px 18px; border-top: 1px solid #F0E8DF; display: flex; gap: 10px; background: white; }
+  .input-bar textarea { flex: 1; padding: 11px 15px; border: 1.5px solid #E8D8C8; border-radius: 14px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--espresso); background: var(--foam); resize: none; height: 46px; max-height: 120px; transition: border-color 0.2s; line-height: 1.5; }
+  .input-bar textarea:focus { outline: none; border-color: var(--caramel); }
+  .platform-select { padding: 0 11px; height: 46px; border: 1.5px solid #E8D8C8; border-radius: 14px; background: var(--foam); font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--espresso); cursor: pointer; }
+  .platform-select:focus { outline: none; border-color: var(--caramel); }
+  .send-btn { width: 46px; height: 46px; border-radius: 14px; border: none; background: var(--espresso); color: var(--latte); font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+  .send-btn:hover { background: var(--caramel); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* REX REPORT FORM */
+  .rex-workspace { display: flex; flex-direction: column; }
+  .rex-form { padding: 24px 28px; border-bottom: 1px solid #F0E8DF; background: #FEFCFA; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #D4843A; }
+  .form-group input, .form-group textarea, .form-group select {
+    padding: 10px 13px; border: 1.5px solid #E8D8C8; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--espresso);
+    background: white; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #D4843A; }
+  .form-group textarea { resize: vertical; min-height: 72px; }
+  .week-label { font-family: 'Playfair Display', serif; font-size: 13px; color: var(--bark); margin-bottom: 14px; }
+
+  .booking-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .booking-row input { text-align: center; }
+
+  .generate-btn {
+    margin-top: 18px; padding: 12px 28px; border-radius: 12px; border: none;
+    background: #D4843A; color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 8px; width: fit-content;
+  }
+  .generate-btn:hover { background: var(--espresso); }
+  .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* REPORT OUTPUT */
+  .report-output { padding: 24px 28px; min-height: 200px; }
+  .report-placeholder { color: #B8A090; font-size: 13.5px; text-align: center; padding: 40px; }
+  .report-placeholder .es-icon { font-size: 40px; margin-bottom: 10px; }
+
+  .report-card { background: var(--foam); border: 1px solid #EDE0D4; border-radius: 16px; padding: 24px; font-size: 13px; line-height: 1.75; color: var(--espresso); white-space: pre-wrap; }
+  .report-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .copy-btn, .reset-btn {
+    padding: 9px 20px; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none;
+  }
+  .copy-btn { background: var(--espresso); color: var(--latte); }
+  .copy-btn:hover { background: var(--caramel); }
+  .reset-btn { background: #F0E8DF; color: var(--bark); }
+  .reset-btn:hover { background: #E8D8C8; }
+
+  @media (max-width: 1100px) { .team-grid { grid-template-columns: repeat(3,1fr); } }
+  @media (max-width: 800px) { .team-grid { grid-template-columns: repeat(2,1fr); } .team-section { padding: 24px 18px; } header { padding: 18px; } .form-grid { grid-template-columns: 1fr; } .booking-row { grid-template-columns: 1fr; } }
+  @media (max-width: 500px) { .platform-badges { display: none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">🐾</div>
+  <h1>Barista & Paws <span>AI Marketing Team</span></h1>
+  <div class="platform-badges">
+    <span class="badge fb">Facebook</span>
+    <span class="badge tt">TikTok</span>
+  </div>
+</header>
+
+<div class="team-section">
+  <div class="section-label">Your Team — Click to activate</div>
+  <div class="team-grid">
+    <div class="persona-card active" data-id="strategist" style="--card-color:#4AADA8" onclick="selectPersona('strategist')">
+      <div class="card-icon" style="background:#EDF7F7">🗺️</div>
+      <div class="card-name">Maya</div>
+      <div class="card-role">Strategist</div>
+      <div class="card-desc">Content calendars, hashtags & growth planning.</div>
+    </div>
+    <div class="persona-card" data-id="writer" style="--card-color:#C8854A" onclick="selectPersona('writer')">
+      <div class="card-icon" style="background:#FBF0E7">✍️</div>
+      <div class="card-name">Coco</div>
+      <div class="card-role">Content Writer</div>
+      <div class="card-desc">Captions, posts & copy that makes tails wag.</div>
+    </div>
+    <div class="persona-card" data-id="community" style="--card-color:#7B9E87" onclick="selectPersona('community')">
+      <div class="card-icon" style="background:#EEF4F0">💬</div>
+      <div class="card-name">Biscuit</div>
+      <div class="card-role">Community Mgr</div>
+      <div class="card-desc">Reply scripts & DM templates.</div>
+    </div>
+    <div class="persona-card" data-id="adcopy" style="--card-color:#D4736A" onclick="selectPersona('adcopy')">
+      <div class="card-icon" style="background:#FAF0EF">📣</div>
+      <div class="card-name">Patch</div>
+      <div class="card-role">Ad Copywriter</div>
+      <div class="card-desc">Scroll-stopping ads for FB & TikTok.</div>
+    </div>
+    <div class="persona-card" data-id="reporter" style="--card-color:#7B68B5" onclick="selectPersona('reporter')">
+      <div class="card-icon" style="background:#F0EEF9">📊</div>
+      <div class="card-name">Rex</div>
+      <div class="card-role">Weekly Reporter</div>
+      <div class="card-desc">Polished weekly reports for your client, every Friday.</div>
+    </div>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div class="workspace" id="workspace">
+    <!-- Chat workspace (Maya/Coco/Biscuit/Patch) -->
+    <div id="chat-workspace">
+      <div class="workspace-header">
+        <div class="ws-icon" id="ws-icon" style="background:#EDF7F7">🗺️</div>
+        <div>
+          <div class="ws-name" id="ws-name">Maya — Social Media Strategist</div>
+          <div class="ws-subtitle" id="ws-subtitle">Let's plan your content strategy for Barista & Paws</div>
+        </div>
+      </div>
+      <div class="quick-prompts" id="quick-prompts"></div>
+      <div class="chat-area" id="chat-area"></div>
+      <div class="input-bar">
+        <select class="platform-select" id="platform-select">
+          <option value="both">FB + TikTok</option>
+          <option value="facebook">Facebook</option>
+          <option value="tiktok">TikTok</option>
+        </select>
+        <textarea id="user-input" placeholder="Ask your marketing team…" rows="1" onkeydown="handleKey(event)"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+
+    <!-- Rex workspace -->
+    <div id="rex-workspace" style="display:none;" class="rex-workspace">
+      <div class="workspace-header">
+        <div class="ws-icon" style="background:#F0EEF9">📊</div>
+        <div>
+          <div class="ws-name">Rex — Weekly Reporter</div>
+          <div class="ws-subtitle">Fill in the week's data and Rex will generate a polished client report</div>
+        </div>
+      </div>
+
+      <div class="rex-form">
+        <div class="week-label" id="week-label">📅 Week of —</div>
+        <div class="form-grid">
+
+          <div class="form-group full">
+            <label>📅 Week Covered (e.g. March 10–14, 2026)</label>
+            <input type="text" id="r-week" placeholder="e.g. March 10–14, 2026" oninput="updateWeekLabel()">
+          </div>
+
+          <div class="form-group full">
+            <label>📝 Posts Published This Week</label>
+            <textarea id="r-posts" placeholder="e.g. 3 posts — grooming promo on Mon, cute Pomeranian video on Wed, boarding post on Fri"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>👍 Facebook Likes / Reactions</label>
+            <input type="number" id="r-fb-likes" placeholder="e.g. 248" min="0">
+          </div>
+          <div class="form-group">
+            <label>💬 Facebook Comments</label>
+            <input type="number" id="r-fb-comments" placeholder="e.g. 34" min="0">
+          </div>
+          <div class="form-group">
+            <label>↗️ Facebook Shares</label>
+            <input type="number" id="r-fb-shares" placeholder="e.g. 12" min="0">
+          </div>
+          <div class="form-group">
+            <label>👁️ Facebook Reach / Impressions</label>
+            <input type="text" id="r-fb-reach" placeholder="e.g. 1,540">
+          </div>
+
+          <div class="form-group">
+            <label>🎵 TikTok Views</label>
+            <input type="text" id="r-tt-views" placeholder="e.g. 3,200">
+          </div>
+          <div class="form-group">
+            <label>❤️ TikTok Likes</label>
+            <input type="text" id="r-tt-likes" placeholder="e.g. 180">
+          </div>
+
+          <div class="form-group">
+            <label>✂️ Grooming Bookings (Total)</label>
+            <input type="number" id="r-groom" placeholder="e.g. 18" min="0">
+          </div>
+          <div class="form-group">
+            <label>🏠 Boarding Bookings (Total)</label>
+            <input type="number" id="r-board" placeholder="e.g. 5" min="0">
+          </div>
+
+          <div class="form-group">
+            <label>🎉 Promos / Giveaways Ran</label>
+            <input type="text" id="r-promos" placeholder="e.g. VIP Card promo ongoing, no new giveaway">
+          </div>
+          <div class="form-group">
+            <label>🏆 Top Performing Content</label>
+            <input type="text" id="r-top" placeholder="e.g. Pomeranian video — 1.2k reach">
+          </div>
+
+          <div class="form-group full">
+            <label>📌 Upcoming Plans for Next Week</label>
+            <textarea id="r-next" placeholder="e.g. Post grooming before/after, run a poll on Facebook, plan TikTok trending audio reel"></textarea>
+          </div>
+
+          <div class="form-group full">
+            <label>📎 Additional Notes (optional)</label>
+            <textarea id="r-notes" placeholder="Anything else your client should know…"></textarea>
+          </div>
+        </div>
+
+        <button class="generate-btn" id="gen-btn" onclick="generateReport()">
+          <span id="gen-btn-text">📊 Generate Weekly Report</span>
+        </button>
+      </div>
+
+      <div class="report-output" id="report-output">
+        <div class="report-placeholder">
+          <div class="es-icon">📋</div>
+          <p>Fill in the form above and hit <strong>Generate</strong> — Rex will write a polished report ready to send to your client.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PAGE_CONTEXT = `
+BARISTA & PAWS — BUSINESS CONTEXT (March 2026):
+
+BUSINESS:
+- Name: Barista & Paws (Barista.Paws on socials)
+- Location: North Mezzanine, SMX Convention Center, MOA Complex, Pasay City
+- Hours: Daily 10AM–8PM
+- Services: Pet grooming, pet boarding, cafe/coffee, pet rehoming & sales
+
+RECENT PAGE HISTORY:
+- Just wrapped Pet Expo 2026 at SMX (Feb 24) — first-time exhibitor, great turnout
+- Ran a grooming giveaway (winner: Arkellone AL, Feb 17)
+- VIP Card promo ongoing: 10% off grooming/boarding/coffee, Buy 1 Take 1 first visit, 1 free drink every visit, valid 1 year
+- Toy Poodle for sale/rehoming (PCCI registered, DOB Jan 2026)
+- Active pet boarding with cute "guests" content
+- Cross-posts Instagram to Facebook, building TikTok presence
+- Content tone: fun, warm, Taglish-friendly, emoji-natural
+
+CONTENT STYLE:
+- Hashtags: #baristapaws #petcare #petgrooming #petboarding #petsofmanila #smxconventioncenter #petfriendlycafe #furparents
+- Branding: dark aesthetic, paw print motifs, watermarked logo
+`;
+
+const PERSONAS = {
+  strategist: {
+    name:"Maya — Social Media Strategist", icon:"🗺️", iconBg:"#EDF7F7",
+    subtitle:"Let's plan your content strategy for Barista & Paws", color:"#4AADA8",
+    emptyMsg:"Ask Maya anything about your Facebook & TikTok strategy, or pick a quick prompt above!",
+    prompts:["Give me a 1-week content calendar","Post-Pet Expo content plan","Best hashtags for pet grooming TikTok","TikTok content series idea","How to grow the page organically"],
+    system:`You are Maya, a sharp Social Media Strategist for Barista & Paws.\n\n${PAGE_CONTEXT}\n\nYour job: content calendars, platform strategy, hashtag sets, growth tactics for Facebook and TikTok. Be specific, practical, reference real recent posts when helpful.`
+  },
+  writer: {
+    name:"Coco — Content Writer", icon:"✍️", iconBg:"#FBF0E7",
+    subtitle:"Captions, posts & stories that make pet owners smile", color:"#C8854A",
+    emptyMsg:"Ask Coco to write captions, post copy, or story content for your Barista & Paws page!",
+    prompts:["Write a grooming promo caption","Post-Pet Expo follow-up caption","VIP Card promo caption","Caption for a boarding post","TikTok caption for a cute dog video"],
+    system:`You are Coco, a witty Content Writer for Barista & Paws.\n\n${PAGE_CONTEXT}\n\nYour job: write captions, post copy, and social content. Match the page tone — fun, warm, Taglish-friendly. Use light Filipino expressions naturally. Always include a CTA.`
+  },
+  community: {
+    name:"Biscuit — Community Manager", icon:"💬", iconBg:"#EEF4F0",
+    subtitle:"Engagement scripts and replies that build loyal customers", color:"#7B9E87",
+    emptyMsg:"Ask Biscuit for reply templates, comment responses, or DM scripts for your page!",
+    prompts:["Reply template for grooming inquiry","DM script for VIP Card inquiry","Response to a new Pet Expo follower","Comment reply for a cute pet photo","Follow-up DM for boarding inquiry"],
+    system:`You are Biscuit, a friendly Community Manager for Barista & Paws.\n\n${PAGE_CONTEXT}\n\nYour job: reply templates, DM scripts, comment responses. Tone: warm, professional, reassuring. Use Filipino warmth naturally. Always give ready-to-use text.`
+  },
+  adcopy: {
+    name:"Patch — Ad Copywriter", icon:"📣", iconBg:"#FAF0EF",
+    subtitle:"Scroll-stopping ads for Facebook and TikTok campaigns", color:"#D4736A",
+    emptyMsg:"Ask Patch to write paid ad copy, boosted post text, or promo announcements!",
+    prompts:["Facebook ad for grooming promo","Boost copy for VIP Card promo","TikTok ad script for pet boarding","Ad for Toy Poodle for sale","Weekend special boosted post"],
+    system:`You are Patch, a results-driven Ad Copywriter for Barista & Paws.\n\n${PAGE_CONTEXT}\n\nYour job: paid ad copy, boosted posts, promo scripts for Facebook and TikTok Ads. Always: strong hook + clear value prop + CTA. Label Facebook ads clearly (Headline / Primary Text / CTA). TikTok: Hook (0–3s) / Body / CTA format.`
+  }
+};
+
+let activePersona = 'strategist';
+let histories = { strategist:[], writer:[], community:[], adcopy:[] };
+let isLoading = false;
+
+function selectPersona(id) {
+  document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('active'));
+  document.querySelector(`[data-id="${id}"]`).classList.add('active');
+  activePersona = id;
+
+  if (id === 'reporter') {
+    document.getElementById('chat-workspace').style.display = 'none';
+    document.getElementById('rex-workspace').style.display = 'flex';
+    document.getElementById('rex-workspace').style.flexDirection = 'column';
+  } else {
+    document.getElementById('rex-workspace').style.display = 'none';
+    document.getElementById('chat-workspace').style.display = 'block';
+    renderWorkspace();
+  }
+}
+
+function renderWorkspace() {
+  const p = PERSONAS[activePersona];
+  if (!p) return;
+  document.getElementById('ws-icon').textContent = p.icon;
+  document.getElementById('ws-icon').style.background = p.iconBg;
+  document.getElementById('ws-name').textContent = p.name;
+  document.getElementById('ws-subtitle').textContent = p.subtitle;
+  const qp = document.getElementById('quick-prompts');
+  qp.innerHTML = p.prompts.map(pr =>
+    `<button class="quick-btn" style="--ac:${p.color}" onclick="quickPrompt('${pr.replace(/'/g,"\\'")}')"> ${pr} </button>`
+  ).join('');
+  renderChat();
+}
+
+function renderChat() {
+  const p = PERSONAS[activePersona];
+  if (!p) return;
+  const area = document.getElementById('chat-area');
+  const history = histories[activePersona];
+  if (!history.length) {
+    area.innerHTML = `<div class="empty-state"><div class="es-icon">${p.icon}</div><p>${p.emptyMsg}</p></div>`;
+    return;
+  }
+  area.innerHTML = history.map(msg => {
+    if (msg.role === 'user') return `<div class="msg user">
+      <div class="msg-avatar" style="background:${p.color}22">🧑</div>
+      <div><div class="msg-label" style="color:${p.color}">You</div>
+      <div class="msg-bubble">${esc(msg.content)}</div></div></div>`;
+    return `<div class="msg assistant">
+      <div class="msg-avatar" style="background:${p.iconBg}">${p.icon}</div>
+      <div><div class="msg-label" style="color:${p.color}">${p.name.split('—')[0].trim()}</div>
+      <div class="msg-bubble">${fmt(msg.content)}</div></div></div>`;
+  }).join('');
+  area.scrollTop = area.scrollHeight;
+}
+
+function fmt(t) {
+  return esc(t)
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/^#{1,3} (.+)$/gm,'<strong>$1</strong>')
+    .replace(/\n/g,'<br>');
+}
+function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function showTyping() {
+  const p = PERSONAS[activePersona];
+  const area = document.getElementById('chat-area');
+  const el = document.createElement('div');
+  el.className = 'msg assistant typing-indicator'; el.id = 'typing-ind';
+  el.innerHTML = `<div class="msg-avatar" style="background:${p.iconBg}">${p.icon}</div>
+    <div class="msg-bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  area.appendChild(el); area.scrollTop = area.scrollHeight;
+}
+function removeTyping() { const e = document.getElementById('typing-ind'); if(e) e.remove(); }
+
+async function sendMessage(override) {
+  if (isLoading) return;
+  const inp = document.getElementById('user-input');
+  const plat = document.getElementById('platform-select').value;
+  const text = override || inp.value.trim();
+  if (!text) return;
+  const platLabel = plat==='both'?'Facebook and TikTok':plat==='facebook'?'Facebook':'TikTok';
+  const full = `[Platform: ${platLabel}]\n${text}`;
+  histories[activePersona].push({ role:'user', content:text });
+  if (!override) { inp.value=''; inp.style.height='46px'; }
+  renderChat();
+  isLoading = true;
+  document.getElementById('send-btn').disabled = true;
+  showTyping();
+  const p = PERSONAS[activePersona];
+  const msgs = [
+    ...histories[activePersona].slice(0,-1).map(m=>({role:m.role,content:m.content})),
+    { role:'user', content:full }
+  ];
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system:p.system, messages:msgs })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'No response. Please try again.';
+    removeTyping();
+    histories[activePersona].push({ role:'assistant', content:reply });
+  } catch(e) {
+    removeTyping();
+    histories[activePersona].push({ role:'assistant', content:'Connection error. Please try again.' });
+  }
+  isLoading = false;
+  document.getElementById('send-btn').disabled = false;
+  renderChat();
+}
+
+function quickPrompt(t) { sendMessage(t); }
+function handleKey(e) {
+  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  const ta = e.target; ta.style.height='46px'; ta.style.height=Math.min(ta.scrollHeight,120)+'px';
+}
+
+function updateWeekLabel() {
+  const val = document.getElementById('r-week').value;
+  document.getElementById('week-label').textContent = val ? `📅 Week of ${val}` : '📅 Week of —';
+}
+
+async function generateReport() {
+  const week    = document.getElementById('r-week').value.trim();
+  const posts   = document.getElementById('r-posts').value.trim();
+  const fbLikes = document.getElementById('r-fb-likes').value;
+  const fbCom   = document.getElementById('r-fb-comments').value;
+  const fbShr   = document.getElementById('r-fb-shares').value;
+  const fbReach = document.getElementById('r-fb-reach').value.trim();
+  const ttViews = document.getElementById('r-tt-views').value.trim();
+  const ttLikes = document.getElementById('r-tt-likes').value.trim();
+  const groom   = document.getElementById('r-groom').value;
+  const board   = document.getElementById('r-board').value;
+  const promos  = document.getElementById('r-promos').value.trim();
+  const top     = document.getElementById('r-top').value.trim();
+  const next    = document.getElementById('r-next').value.trim();
+  const notes   = document.getElementById('r-notes').value.trim();
+
+  if (!week) { alert('Please enter the week covered first.'); return; }
+
+  const btn = document.getElementById('gen-btn');
+  const btnText = document.getElementById('gen-btn-text');
+  btn.disabled = true;
+  btnText.textContent = '⏳ Generating…';
+
+  const totalBookings = (parseInt(groom)||0) + (parseInt(board)||0);
+
+  const prompt = `Generate a polished, professional weekly social media & operations report for Barista & Paws to send to their client/owner.
+
+WEEK COVERED: ${week}
+
+DATA PROVIDED:
+- Posts published: ${posts || 'Not specified'}
+- Facebook reactions/likes: ${fbLikes || 'N/A'}
+- Facebook comments: ${fbCom || 'N/A'}
+- Facebook shares: ${fbShr || 'N/A'}
+- Facebook reach/impressions: ${fbReach || 'N/A'}
+- TikTok views: ${ttViews || 'N/A'}
+- TikTok likes: ${ttLikes || 'N/A'}
+- Grooming bookings: ${groom || 'N/A'}
+- Boarding bookings: ${board || 'N/A'}
+- Total bookings this week: ${totalBookings || 'N/A'}
+- Promos / giveaways: ${promos || 'None'}
+- Top performing content: ${top || 'Not specified'}
+- Plans for next week: ${next || 'Not specified'}
+- Additional notes: ${notes || 'None'}
+
+REPORT FORMAT:
+Write a clean, professional report with these clearly labeled sections:
+1. EXECUTIVE SUMMARY (2-3 sentences overview of the week)
+2. SOCIAL MEDIA PERFORMANCE
+   - Facebook highlights
+   - TikTok highlights
+3. CONTENT PUBLISHED
+4. BOOKINGS SUMMARY (grooming, boarding, total)
+5. PROMOTIONS & CAMPAIGNS
+6. TOP PERFORMING CONTENT
+7. PLANS FOR NEXT WEEK
+8. NOTES / RECOMMENDATIONS (brief)
+
+Tone: Professional but warm. This is a client report from a social media manager to a business owner. Use clear headings, clean formatting. Do not use excessive emojis in the report body — keep it business-appropriate. Start with "WEEKLY REPORT — BARISTA & PAWS" and the week dates as the title.`;
+
+  const output = document.getElementById('report-output');
+  output.innerHTML = `<div style="display:flex;align-items:center;gap:12px;padding:40px;color:#B8A090;font-size:13.5px;justify-content:center;">
+    <div style="display:flex;gap:4px">${[1,2,3].map(()=>'<div class="dot"></div>').join('')}</div>
+    Rex is writing your report…
+  </div>`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:1500,
+        system:`You are Rex, a professional report writer for Barista & Paws — a pet grooming, boarding, and cafe business at SMX Convention Center, Pasay City. You write clear, polished weekly reports for the business owner/client. Reports are accurate, concise, and professional. Never fabricate data — use only what's provided, and note "N/A" or "not reported" where data is missing.`,
+        messages:[{ role:'user', content:prompt }]
+      })
+    });
+    const data = await res.json();
+    const report = data.content?.[0]?.text || 'Could not generate report. Please try again.';
+    output.innerHTML = `
+      <div class="report-card" id="report-text">${fmt(report)}</div>
+      <div class="report-actions">
+        <button class="copy-btn" onclick="copyReport()">📋 Copy Report</button>
+        <button class="reset-btn" onclick="clearReport()">🔄 Generate New</button>
+      </div>`;
+    window._lastReport = report;
+  } catch(e) {
+    output.innerHTML = `<div class="report-placeholder"><div class="es-icon">⚠️</div><p>Something went wrong. Please check your connection and try again.</p></div>`;
+  }
+  btn.disabled = false;
+  btnText.textContent = '📊 Generate Weekly Report';
+}
+
+function copyReport() {
+  if (!window._lastReport) return;
+  navigator.clipboard.writeText(window._lastReport).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy Report', 2000);
+  });
+}
+
+function clearReport() {
+  document.getElementById('report-output').innerHTML = `<div class="report-placeholder">
+    <div class="es-icon">📋</div>
+    <p>Fill in the form above and hit <strong>Generate</strong> — Rex will write a polished report ready to send to your client.</p>
+  </div>`;
+  window._lastReport = null;
+}
+
+// INIT
+renderWorkspace();
+</script>
+</body>
+</html>
