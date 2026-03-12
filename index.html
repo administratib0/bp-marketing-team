@@ -291,7 +291,7 @@
 
 <script>
 // ── GEMINI CONFIG ────────────────────────────────────────────────────────────
-const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-2.5-flash';
 const GEMINI_ENDPOINT = (key) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`;
 
@@ -322,14 +322,15 @@ async function saveApiKey() {
   try {
     const res = await fetch(GEMINI_ENDPOINT(key), {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: 'hi' }] }] })
+      body: JSON.stringify({ contents: [{ parts: [{ text: 'hi' }] }], generationConfig: { maxOutputTokens: 10 } })
     });
-    if (!res.ok) throw new Error('Invalid key');
+    const testData = await res.json();
+    if (testData.error) throw new Error(testData.error.message);
     API_KEY = key;
     localStorage.setItem('bp_gemini_key', key);
     document.getElementById('key-gate').style.display = 'none';
   } catch(e) {
-    err.textContent = '❌ Invalid key or connection error. Please try again.';
+    err.textContent = 'Error: ' + (e.message || 'Invalid key. Please try again.');
   }
   btn.disabled = false; btn.textContent = "Let's Go 🚀";
 }
