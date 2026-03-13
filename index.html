@@ -211,6 +211,47 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   .rex-form-grid{grid-template-columns:1fr}
   .rex-form-grid .full{grid-column:1}
 }
+
+/* ── IMAGE GEN ── */
+.img-gen-bar{max-width:52rem;margin:.5rem auto 0;padding:0 1.5rem}
+.img-gen-inner{background:var(--surface);border:1.5px solid var(--border2);border-radius:.875rem;padding:.6rem .875rem;display:flex;align-items:center;gap:.6rem}
+.img-gen-inner input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:.85rem;font-family:'Inter',sans-serif}
+.img-gen-inner input::placeholder{color:var(--muted)}
+.img-gen-btn{padding:.35rem .9rem;border-radius:.5rem;border:none;background:var(--accent);color:#fff;font-size:.78rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0}
+.img-gen-btn:hover{filter:brightness(1.1)}
+.img-gen-btn:disabled{opacity:.45;cursor:not-allowed}
+.img-gen-hint{font-size:.67rem;color:var(--muted);text-align:center;margin-top:.3rem;max-width:52rem;margin-left:auto;margin-right:auto;padding:0 1.5rem}
+.generated-img-wrap{max-width:52rem;margin:.75rem auto 0;padding:0 1.5rem}
+.generated-img-wrap img{max-width:100%;border-radius:1rem;border:1px solid var(--border);box-shadow:0 4px 20px var(--shadow-md);display:block}
+.generated-img-actions{display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap}
+.img-dl-btn{padding:.35rem .875rem;border-radius:.5rem;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);font-size:.78rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:.3rem}
+.img-dl-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
+
+/* ── SCHEDULE BUTTON ── */
+.schedule-btn{font-size:.7rem;color:var(--muted);background:none;border:1px solid var(--border);border-radius:.4rem;padding:.18rem .55rem;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap}
+.schedule-btn:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-lt)}
+
+/* ── CALENDAR MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px)}
+.modal-box{background:var(--surface);border-radius:1.25rem;padding:1.75rem;max-width:26rem;width:100%;box-shadow:0 24px 60px var(--shadow-md);border:1px solid var(--border);position:relative}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:1.25rem 1.25rem 0 0}
+.modal-title{font-size:1rem;font-weight:700;margin-bottom:.25rem}
+.modal-sub{font-size:.82rem;color:var(--text2);margin-bottom:1.25rem;line-height:1.55}
+.modal-field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.875rem}
+.modal-field label{font-size:.7rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em}
+.modal-field input,.modal-field textarea,.modal-field select{background:var(--surface2);border:1.5px solid var(--border2);border-radius:.75rem;padding:.65rem .875rem;color:var(--text);font-size:.88rem;font-family:'Inter',sans-serif;transition:all .2s;width:100%}
+.modal-field input:focus,.modal-field textarea:focus,.modal-field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,133,74,.12)}
+.modal-field textarea{resize:vertical;min-height:80px;line-height:1.6}
+.modal-actions{display:flex;gap:.6rem;margin-top:1.1rem;flex-wrap:wrap}
+.modal-confirm{flex:1;background:var(--accent);color:#fff;border:none;padding:.75rem;border-radius:.75rem;font-size:.9rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s}
+.modal-confirm:hover{filter:brightness(1.1)}
+.modal-confirm:disabled{opacity:.5;cursor:not-allowed}
+.modal-cancel{padding:.75rem 1.1rem;border-radius:.75rem;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);font-size:.88rem;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s}
+.modal-cancel:hover{background:var(--surface);color:var(--text)}
+.modal-status{font-size:.82rem;margin-top:.6rem;padding:.55rem .875rem;border-radius:.6rem;display:none}
+.modal-status.success{background:rgba(22,163,74,.1);color:var(--green);border:1px solid rgba(22,163,74,.2);display:block}
+.modal-status.error{background:var(--red-dim);color:var(--red);border:1px solid rgba(220,38,38,.2);display:block}
+
 </style>
 </head>
 <body>
@@ -331,6 +372,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         </div>
       </div>
       <div class="chips-row" id="chips-writer"></div>
+      <!-- Coco image gen bar -->
+      <div class="img-gen-bar">
+        <div class="img-gen-inner">
+          <input type="text" id="img-prompt" placeholder="Describe the image you want for this post… (e.g. cute Shih Tzu being groomed, warm café background)">
+          <button class="img-gen-btn" id="img-gen-btn" onclick="generateImage()">🎨 Generate Image</button>
+        </div>
+      </div>
+      <div class="img-gen-hint">Powered by Imagen 3 · Images are generated for Barista & Paws social posts</div>
+      <div id="img-output"></div>
       <div class="chat-input-wrap">
         <div class="input-toolbar">
           <span class="toolbar-label">Platform</span>
@@ -755,6 +805,7 @@ function appendMsg(feed, role, content, name, icon, time){
       <div class="msg-meta">
         <span class="msg-time">${time}</span>
         ${role!=='user'?`<button class="msg-copy" onclick="copyText(this,'${encodeURIComponent(content)}')">Copy</button>`:''}
+        ${role!=='user'?`<button class="schedule-btn" onclick="openCalModal('${encodeURIComponent(content)}')">📅 Schedule</button>`:''}
       </div>
     </div>`;
   feed.appendChild(row);
@@ -997,6 +1048,161 @@ function clearRex(){
   document.getElementById('rex-output').innerHTML='';
   window._lastReport=null;
 }
+
+// ══ IMAGE GENERATION (Imagen 3) ═════════════════════════════════════════════
+const IMAGEN_URL = k => `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${k}`;
+
+async function generateImage(){
+  const promptEl = document.getElementById('img-prompt');
+  const btn = document.getElementById('img-gen-btn');
+  const out = document.getElementById('img-output');
+  const userPrompt = promptEl.value.trim();
+  if(!userPrompt){ alert('Please describe the image you want first!'); return; }
+
+  btn.disabled = true; btn.textContent = '⏳ Generating…';
+  out.innerHTML = `<div class="generated-img-wrap">
+    <div style="background:var(--surface2);border-radius:1rem;height:260px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.75rem;color:var(--muted);font-size:.88rem">
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+      <div>Luna is painting your image…</div>
+    </div>
+  </div>`;
+
+  // Enhance prompt for B&P brand
+  const fullPrompt = `Professional social media photo for Barista & Paws pet grooming and boarding cafe in Manila Philippines. ${userPrompt}. Warm, inviting, high quality, vibrant colors, suitable for Facebook and TikTok post. Clean modern aesthetic with warm tones.`;
+
+  try{
+    const res = await fetch(IMAGEN_URL(API_KEY),{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        instances:[{ prompt: fullPrompt }],
+        parameters:{ sampleCount:1, aspectRatio:'1:1', safetyFilterLevel:'block_few', personGeneration:'allow_all' }
+      })
+    });
+    const data = await res.json();
+    if(data.error) throw new Error(data.error.message);
+    const b64 = data.predictions?.[0]?.bytesBase64Encoded;
+    if(!b64) throw new Error('No image returned. Try a different prompt.');
+    const src = `data:image/png;base64,${b64}`;
+    const ts = Date.now();
+    out.innerHTML = `<div class="generated-img-wrap">
+      <img src="${src}" alt="Generated image" id="gen-img-${ts}">
+      <div class="generated-img-actions">
+        <a class="img-dl-btn" href="${src}" download="barista-paws-post-${ts}.png">⬇️ Download</a>
+        <button class="img-dl-btn" onclick="generateImage()">🔄 Regenerate</button>
+        <button class="img-dl-btn" onclick="openCalModal(document.getElementById('img-prompt').value,'Image post: '+document.getElementById('img-prompt').value)">📅 Schedule this post</button>
+      </div>
+    </div>`;
+  }catch(e){
+    out.innerHTML = `<div class="generated-img-wrap" style="color:var(--red);font-size:.85rem;padding:.75rem">⚠️ ${e.message}</div>`;
+  }
+  btn.disabled=false; btn.textContent='🎨 Generate Image';
+}
+
+// ══ CALENDAR MODAL ═══════════════════════════════════════════════════════════
+let _pendingContent = '';
+
+function openCalModal(encodedContent, customTitle=''){
+  _pendingContent = decodeURIComponent(encodedContent||'');
+  // Pre-fill title from first line of content
+  const firstLine = _pendingContent.split('\n')[0].replace(/[*#]/g,'').trim().slice(0,60);
+  document.getElementById('cal-title').value = customTitle || (firstLine ? `Post: ${firstLine}` : 'Barista & Paws Post');
+  document.getElementById('cal-notes').value = _pendingContent.slice(0,800);
+  document.getElementById('cal-status').className='modal-status';
+  document.getElementById('cal-status').textContent='';
+  // Set default datetime to next round hour
+  const d = new Date(); d.setHours(d.getHours()+1,0,0,0);
+  document.getElementById('cal-datetime').value = d.toISOString().slice(0,16);
+  document.getElementById('cal-modal').style.display='flex';
+}
+
+function closeCalModal(e){
+  if(e && e.target!==document.getElementById('cal-modal')) return;
+  document.getElementById('cal-modal').style.display='none';
+}
+
+function confirmSchedule(){
+  const title  = document.getElementById('cal-title').value.trim();
+  const dt     = document.getElementById('cal-datetime').value;
+  const plat   = document.getElementById('cal-platform').value;
+  const notes  = document.getElementById('cal-notes').value.trim();
+  const status = document.getElementById('cal-status');
+
+  if(!title || !dt){
+    status.textContent = 'Please fill in the title and date/time first.';
+    status.className = 'modal-status error';
+    return;
+  }
+
+  // Build Google Calendar URL
+  // Format: YYYYMMDDTHHmmss (local, no Z)
+  const start  = new Date(dt);
+  const end    = new Date(start.getTime() + 30 * 60000); // 30 min block
+
+  function toGCalDate(d){
+    const pad = n => String(n).padStart(2,'0');
+    return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+  }
+
+  const description = `📱 Platform: ${plat}%0A%0A📝 Post Content:%0A${encodeURIComponent(notes)}%0A%0A----%0AScheduled by Barista %26 Paws AI Marketing Team`;
+
+  const gcalUrl = [
+    'https://calendar.google.com/calendar/render?action=TEMPLATE',
+    `&text=${encodeURIComponent('🐾 ' + title)}`,
+    `&dates=${toGCalDate(start)}/${toGCalDate(end)}`,
+    `&details=${description}`,
+    `&location=${encodeURIComponent('North Mezzanine, SMX Convention Center, Pasay City')}`,
+    `&sf=true&output=xml`
+  ].join('');
+
+  // Show success then open calendar
+  status.textContent = `✅ Opening Google Calendar — click Save to confirm your reminder for ${start.toLocaleString('en-PH',{dateStyle:'medium',timeStyle:'short'})}.`;
+  status.className = 'modal-status success';
+
+  setTimeout(() => {
+    window.open(gcalUrl, '_blank');
+    setTimeout(() => {
+      document.getElementById('cal-modal').style.display = 'none';
+      status.className = 'modal-status';
+      status.textContent = '';
+    }, 2000);
+  }, 600);
+}
+
 </script>
+
+<!-- ══ CALENDAR MODAL ══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="cal-modal" style="display:none" onclick="closeCalModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-title">📅 Schedule to Google Calendar</div>
+    <div class="modal-sub">Add a posting reminder so you never miss a scheduled upload.</div>
+    <div class="modal-field">
+      <label>Post / Event Title</label>
+      <input type="text" id="cal-title" placeholder="e.g. Post: VIP Card Promo Facebook">
+    </div>
+    <div class="modal-field">
+      <label>Date & Time to Post</label>
+      <input type="datetime-local" id="cal-datetime">
+    </div>
+    <div class="modal-field">
+      <label>Platform</label>
+      <select id="cal-platform">
+        <option value="Facebook">Facebook</option>
+        <option value="TikTok">TikTok</option>
+        <option value="Facebook + TikTok">Facebook + TikTok</option>
+        <option value="Instagram">Instagram</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Post Content / Notes</label>
+      <textarea id="cal-notes" placeholder="Paste the caption or notes here…"></textarea>
+    </div>
+    <div class="modal-status" id="cal-status"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeCalModal()">Cancel</button>
+      <button class="modal-confirm" id="cal-confirm-btn" onclick="confirmSchedule()">📅 Add to Calendar</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
